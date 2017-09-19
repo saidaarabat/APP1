@@ -4,23 +4,23 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Test_webAPI.Controllers
+namespace WebAPI_Sondage.Controllers
 {
     [Route("api/[controller]")]
     public class ValuesController : Controller
     {
         // GET api/values
         [HttpGet]
-        public IEnumerable<value> Get()
+        public IEnumerable<string> Get()
         {
-            return new value[] { new value { id = 1, Text="value1"}, new value {id = 2, Text = "value2" } };
+            return new string[] { "value1", "value2" };
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public value Get(int id)
+        public string Get(int id)
         {
-            return new value{id=id, Text= "value"};
+            return "value";
         }
 
         // POST api/values
@@ -40,9 +40,5 @@ namespace Test_webAPI.Controllers
         public void Delete(int id)
         {
         }
-    }
-    public class value {
-        public int id { get; set;}
-        public string Text { get; set; }
     }
 }
