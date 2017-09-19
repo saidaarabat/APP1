@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
 
-namespace USherbrooke.ServiceModel.Sondage
+namespace WebAPI_Sondage.Controllers
 {
     /// <summary>
     /// Cette exception est lancée lorsqu'une transaction avec le médium de stockage permanent (base de données, par exemple) a échoué.

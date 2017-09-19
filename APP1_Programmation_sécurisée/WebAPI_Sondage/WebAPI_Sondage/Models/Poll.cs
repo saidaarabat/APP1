@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
 
-namespace USherbrooke.ServiceModel.Sondage
+namespace WebAPI_Sondage.Models
 {
     /// <summary>
     /// Cette classe définit un sondage.

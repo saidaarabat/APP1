@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using WebAPI_Sondage.Models;
 
 namespace WebAPI_Sondage.Controllers
 {
@@ -20,7 +21,9 @@ namespace WebAPI_Sondage.Controllers
         [HttpGet("{id}")]
         public string Get(int id)
         {
-            return "value";
+            ISondageDAO test = new SimpleSondageDAO();
+            PollQuestion question = test.GetNextQuestion(1, id);
+            return question.Text;
         }
 
         // POST api/values

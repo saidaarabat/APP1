@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
 
-namespace USherbrooke.ServiceModel.Sondage
+namespace WebAPI_Sondage.Controllers
 {
     /// <summary>
     /// Exception lancée lorsque l'identifiant fourni à la couche de persistence n'est pas valide.

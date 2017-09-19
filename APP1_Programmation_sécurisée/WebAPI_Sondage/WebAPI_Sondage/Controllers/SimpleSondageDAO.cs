@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using WebAPI_Sondage.Models;
 
-namespace USherbrooke.ServiceModel.Sondage
+namespace WebAPI_Sondage.Controllers
 {
     /// <summary>
     /// Implémentation très simple de l'interface de communication, utilisant la mémoire pour stocker les réponses.

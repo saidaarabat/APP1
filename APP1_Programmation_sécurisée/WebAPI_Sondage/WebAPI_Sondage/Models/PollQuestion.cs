@@ -5,7 +5,7 @@ using System.Text;
 using System.Data;
 using System.Runtime.Serialization;
 
-namespace USherbrooke.ServiceModel.Sondage
+namespace WebAPI_Sondage.Models
 {   
     /// <summary>
     /// Définit une question dans un sondage. La question contient toujours l'identifiant

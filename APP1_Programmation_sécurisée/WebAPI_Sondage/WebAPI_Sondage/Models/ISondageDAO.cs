@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace USherbrooke.ServiceModel.Sondage
+namespace WebAPI_Sondage.Models
 {
     /// <summary>
     /// Définit l'interface de communication entre le logiciel et le médium de stockage qui sera utilisé (BD, fichier XML, mémoire, etc).
