@@ -26,11 +26,7 @@ namespace WebAPI_Sondage.Controllers
             return question.Text;
         }
 
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody]string value)
-        {
-        }
+		[HttpPost]
 
         // PUT api/values/5
         [HttpPut("{id}")]
@@ -42,6 +38,6 @@ namespace WebAPI_Sondage.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-        }
+		}
     }
 }

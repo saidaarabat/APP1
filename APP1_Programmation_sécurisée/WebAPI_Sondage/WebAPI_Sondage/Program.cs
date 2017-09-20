@@ -19,17 +19,29 @@ namespace WebAPI_Sondage
             BuildWebHost(args).Run();
         }
 
-        public static IWebHost BuildWebHost(string[] args) =>
-    	    WebHost.CreateDefaultBuilder(args)
-    		.UseStartup<Startup>()
-    		.UseKestrel(options =>
-    		{
-    			options.Listen(IPAddress.Loopback, 5000);
-    			options.Listen(IPAddress.Loopback, 5001, listenOptions =>
-    			{
-    				listenOptions.UseHttps("testCert.pfx", "testPassword");
-    			});
-    		})
-    		.Build();
+		public static IWebHost BuildWebHost(string[] args) =>
+	    WebHost.CreateDefaultBuilder(args)
+               .UseKestrel(options => {
+
+				   options.Listen(IPAddress.Loopback, 8080, listenOptions =>
+				   {
+					   // Uncomment the following to enable Nagle's algorithm for this endpoint.
+					   //listenOptions.NoDelay = false;
+
+					   listenOptions.UseConnectionLogging();
+				   });
+
+				   options.Listen(IPAddress.Loopback, 8081, listenOptions =>
+				   {
+					   listenOptions.UseHttps("localhost.pfx", "password");
+					   listenOptions.UseConnectionLogging();
+				   });
+
+				   options.UseSystemd();
+        })
+               .UseIISIntegration()
+               .UseContentRoot(Directory.GetCurrentDirectory())
+               .UseStartup<Startup>()
+		.Build();
     }
 }
