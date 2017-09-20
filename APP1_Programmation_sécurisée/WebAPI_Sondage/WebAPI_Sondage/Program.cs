@@ -7,6 +7,8 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Server.Kestrel.Https;
+using System.Net;
 
 namespace WebAPI_Sondage
 {
@@ -18,8 +20,16 @@ namespace WebAPI_Sondage
         }
 
         public static IWebHost BuildWebHost(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
-                .Build();
+    	    WebHost.CreateDefaultBuilder(args)
+    		.UseStartup<Startup>()
+    		.UseKestrel(options =>
+    		{
+    			options.Listen(IPAddress.Loopback, 5000);
+    			options.Listen(IPAddress.Loopback, 5001, listenOptions =>
+    			{
+    				listenOptions.UseHttps("testCert.pfx", "testPassword");
+    			});
+    		})
+    		.Build();
     }
 }
