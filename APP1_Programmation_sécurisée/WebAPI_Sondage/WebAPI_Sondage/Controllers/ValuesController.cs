@@ -15,12 +15,14 @@ namespace WebAPI_Sondage.Controllers
     [Route("api/[controller]")]
     public class ValuesController : Controller
     {
-        // GET api/values
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
+		// GET api/values
+		[HttpGet]
+		public List<Poll> Categories()
+		{
+			ISondageDAO test = new SimpleSondageDAO();
+			List<Poll> questions = test.GetAvailablePolls().ToList();
+			return questions;
+		}
 
         // GET api/values/5
         [HttpGet("{id}")]
