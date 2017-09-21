@@ -4,6 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI_Sondage.Models;
+using System.Web;
+using Newtonsoft.Json.Linq;
+using System.Net.Http;
+using System.IO;
+using System.Net;
 
 namespace WebAPI_Sondage.Controllers
 {
@@ -26,18 +31,15 @@ namespace WebAPI_Sondage.Controllers
             return question.Text;
         }
 
-		[HttpPost]
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        [HttpPost]
+        public HttpResponseMessage Post([FromBody]Poll reponseQuestion)
         {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-		}
+            HttpResponseMessage reponse = new HttpResponseMessage();
+            if (reponseQuestion != null)
+                reponse.StatusCode = HttpStatusCode.OK;
+			else
+				reponse.StatusCode = HttpStatusCode.NotAcceptable;
+            return reponse;
+	    }
     }
 }
