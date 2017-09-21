@@ -3,6 +3,8 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using System.Security.Cryptography.X509Certificates;
+using System.IO;
 
 namespace WebAPIClient
 {
@@ -10,18 +12,17 @@ namespace WebAPIClient
 	{
 		public static void Main(string[] args)
 		{
-            GetQuestions().Wait();
 
             try
 			{
-                string webAddr = "https://localhost:8081/api/values/1/12";
+                string webAddr = "https://localhost:8080/api/values/";
 
 				var httpWebRequest = (HttpWebRequest)WebRequest.Create(webAddr);
 				httpWebRequest.ContentType = "application/json; charset=utf-8";
 				httpWebRequest.Method = "POST";
 
-				X509Certificate Cert = new X509Certificate();
-				Cert.Import(@"localhost.pfx", "password", X509KeyStorageFlags.PersistKeySet);
+                X509Certificate cert = X509Certificate.CreateFromCertFile("mycerts.cer");
+                httpWebRequest.ClientCertificates.Add(cert);
 
 				using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
 				{
@@ -30,7 +31,7 @@ namespace WebAPIClient
 					streamWriter.Write(json);
 					streamWriter.Flush();
 				}
-				var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+                var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
 				using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
 				{
 					var responseText = streamReader.ReadToEnd();
@@ -39,11 +40,13 @@ namespace WebAPIClient
 					//Now you have your response.
 					//or false depending on information in the response     
 				}
+
 			}
 			catch (WebException ex)
 			{
 				Console.WriteLine(ex.Message);
 			}
+
 		}
 
 		static async Task GetQuestions()
