@@ -15,7 +15,7 @@ namespace WebAPIClient
 
             try
 			{
-                string webAddr = "https://localhost:8080/api/values/";
+                string webAddr = "https://localhost:8081/api/values/";
 
 				var httpWebRequest = (HttpWebRequest)WebRequest.Create(webAddr);
 				httpWebRequest.ContentType = "application/json; charset=utf-8";
