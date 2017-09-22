@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Security.Cryptography.X509Certificates;
 using System.IO;
+using System.Threading;
 
 namespace WebAPIClient
 {
@@ -15,16 +16,19 @@ namespace WebAPIClient
 
             try
 			{
-                string webAddr = "https://localhost:8080/api/values/";
+                string webAddr = "https://localhost:8081/api/values/";
 
 				var httpWebRequest = (HttpWebRequest)WebRequest.Create(webAddr);
 				httpWebRequest.ContentType = "application/json; charset=utf-8";
 				httpWebRequest.Method = "POST";
 
-                X509Certificate cert = X509Certificate.CreateFromCertFile("mycerts.cer");
-                httpWebRequest.ClientCertificates.Add(cert);
+                //X509Certificate2 cert = new X509Certificate2("mycerts.cer","password");
+                //httpWebRequest.ClientCertificates.Add(cert);
 
-				using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+                // Ignore the certificate check when ssl
+                httpWebRequest.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
+
+                using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
 				{
 					string json = "{ \"Id\" : 33 , \"Description\" : \"test\" }";
 
@@ -47,7 +51,10 @@ namespace WebAPIClient
 				Console.WriteLine(ex.Message);
 			}
 
-		}
+            int milliseconds = 200000;
+            Thread.Sleep(milliseconds);
+
+        }
 
 		static async Task GetQuestions()
 		{
