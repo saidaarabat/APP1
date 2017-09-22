@@ -28,14 +28,17 @@ namespace WebAPI_Sondage.Controllers
         [HttpGet("{id}")]
         public string Get(int id)
         {
+            Console.WriteLine("Get");
             ISondageDAO test = new SimpleSondageDAO();
             PollQuestion question = test.GetNextQuestion(1, id);
             return question.Text;
+            
         }
 
         [HttpPost]
         public HttpResponseMessage Post([FromBody]Poll reponseQuestion)
         {
+            Console.WriteLine("Post");
             HttpResponseMessage reponse = new HttpResponseMessage();
             if (reponseQuestion != null)
                 reponse.StatusCode = HttpStatusCode.OK;

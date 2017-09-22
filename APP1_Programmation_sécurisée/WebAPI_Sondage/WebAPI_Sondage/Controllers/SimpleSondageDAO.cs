@@ -14,7 +14,7 @@ namespace WebAPI_Sondage.Controllers
     public class SimpleSondageDAO : ISondageDAO
     {
         // Lorsque l'on ne possède pas d'identifiant.
-        private const int NO_AVAILABLE_ID = -1;
+        private const int NO_AVAILABLE_ID = 0;
 
         // Contient les descriptions des sondages disponibles.
         private readonly IList<Poll> pollDescriptions = new List<Poll>();
