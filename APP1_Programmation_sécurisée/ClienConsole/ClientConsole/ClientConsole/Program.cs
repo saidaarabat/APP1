@@ -106,8 +106,6 @@ namespace ClientConsole
 				httpWebRequest.ContentType = "application/json; charset=utf-8";
 				httpWebRequest.Method = "POST";
 
-                // Token authentification 
-
                 // Certificat pour le SSL/TLS
                 //X509Certificate2 cert = new X509Certificate2("mycerts.cer","password");
                 //X509Certificate2 cert = new X509Certificate2("mycerts.cer");
