@@ -1,20 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI_Sondage.Models;
-using System.Web;
-using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using System.IO;
 using System.Net;
 using Newtonsoft.Json;
 
+
 namespace WebAPI_Sondage.Controllers
 {
     [Route("api/[controller]")]
-    public class ValuesController : Controller
+	[RESTAuthorize]
+	public class ValuesController : Controller
     {
 		// GET api/values
 		[HttpGet]
@@ -27,30 +26,33 @@ namespace WebAPI_Sondage.Controllers
 
         // GET api/values/5
         [HttpGet("{idPoll}/{idQuestion}")]
-        public HttpResponseMessage Get(int idPoll, int idQuestion)
+        public PollQuestion Get(int idPoll, int idQuestion)
         {
-            HttpResponseMessage reponse = new HttpResponseMessage();
+
             Boolean validationToken = false;
             Console.WriteLine("Get");
-            List<User> users = LoadJson();
-            string token = "eyJpZCI6IjEiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjEifQ.pQYKhDF1yyKOjPvZQEMSc5LAizD3R2VMzr1rbH6ih0I";
+			ISondageDAO test = new SimpleSondageDAO();
+			List<User> users = LoadJson();
+            PollQuestion defaultResponse = test.GetNextQuestion(0, 0);
+
+            var requete = Request;
+            var token = requete.Headers["Token"].ToString();
+
 
             foreach (User user in users){
                 if (user.token.Equals(token)) {
                     validationToken = true;
                 }
             }
-
-            if (validationToken.Equals(true)){
-				reponse.StatusCode = HttpStatusCode.OK;
-				ISondageDAO test = new SimpleSondageDAO();
-				PollQuestion question = test.GetNextQuestion(1, idQuestion);
+            if (validationToken.Equals(true))
+            {
+                PollQuestion question = test.GetNextQuestion(idPoll, idQuestion);
                 string json = JsonConvert.SerializeObject(question);
-                reponse.Content = new StringContent(json);
+
+                return question;
             }
-			else
-                reponse.StatusCode = HttpStatusCode.Unauthorized;
-            return reponse;
+            else
+                return defaultResponse;
         }
 
         [HttpPost]
