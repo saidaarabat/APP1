@@ -11,8 +11,17 @@ namespace ClientConsole
         // Fonction principal
         public static void Main(string[] args)
         {
-            // Choix du sondage par l utilisateur
-            Console.WriteLine("Bienvenue dans l'application client dédiée au sondage, quel sondage voulez vous sélectionner : 1-Lecture à la maison ou 2-Consommation de café et d'alcool ? Tapez 1 ou 2 ");
+			// Choix du Token
+			Console.WriteLine("Authentification : 1 = Token valide -- 2 = Token non valide");
+
+            string token="InvalidToken";
+            // Lecture de son choix et conversion en Int
+			int valideToken = Int32.Parse(Console.ReadLine());
+			if (valideToken.Equals(1))
+				token = "eyJpZCI6IjEiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjEifQ.pQYKhDF1yyKOjPvZQEMSc5LAizD3R2VMzr1rbH6ih0I";
+
+			// Choix du sondage par l utilisateur
+			Console.WriteLine("Bienvenue dans l'application client dédiée au sondage, quel sondage voulez vous sélectionner : 1-Lecture à la maison ou 2-Consommation de café et d'alcool ? Tapez 1 ou 2 ");
 
             // Lecture de son choix et conversion en int
             int poolId = Int32.Parse(Console.ReadLine());
@@ -23,16 +32,16 @@ namespace ClientConsole
                 if (i == 0)
                 {
                     // Get premeiere question
-                    GetQuestion(poolId, 0);
+                    GetQuestion(token, poolId, 0);
                 } else
                 {
                     // Get autres questions
-                    GetQuestion(poolId, poolId * 10 + i);
+                    GetQuestion(token, poolId, poolId * 10 + i);
                 }
                 // Lecture reponse
                 string reponseQuestion = Console.ReadLine();
                 // Post de la reponse vers l api
-                PostQuestion(poolId,poolId * 10 + i +1 , reponseQuestion);
+                PostQuestion(token, poolId,poolId * 10 + i +1 , reponseQuestion);
             }
 
             // Fin du Main
@@ -47,16 +56,17 @@ namespace ClientConsole
          * poolId : ID du sondage 
          * questionId : Id de la question
         */
-        public static void GetQuestion(int poolId, int questionId)
+        public static void GetQuestion(string token, int poolId, int questionId)
         {
             try
             {
                 // Adresse auquel correspond le GET de l API
-                string webAddr = "https://localhost:8081/api/values/" + questionId.ToString();
+                string webAddr = "https://localhost:8081/api/values/" + poolId.ToString() + questionId.ToString();
 
                 // Définition du Header
                 var httpWebRequest = (HttpWebRequest)WebRequest.Create(webAddr);
                 httpWebRequest.ContentType = "application/json; charset=utf-8";
+                httpWebRequest.Headers["Token"] = token;
                 httpWebRequest.Method = "GET";
 
                 // Token authentification 
@@ -94,7 +104,7 @@ namespace ClientConsole
          * questionId : Id de la question
          * text : reponse a la question
         */
-        public static void PostQuestion(int pollId, int questionId, string text)
+        public static void PostQuestion(string token, int pollId, int questionId, string text)
         {
             try
 			{
@@ -105,6 +115,7 @@ namespace ClientConsole
                 var httpWebRequest = (HttpWebRequest)WebRequest.Create(webAddr);
 				httpWebRequest.ContentType = "application/json; charset=utf-8";
 				httpWebRequest.Method = "POST";
+                httpWebRequest.Headers["Token"] = token;
 
                 // Certificat pour le SSL/TLS
                 //X509Certificate2 cert = new X509Certificate2("mycerts.cer","password");
