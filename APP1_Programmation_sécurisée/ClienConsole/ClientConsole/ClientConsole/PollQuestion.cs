@@ -28,5 +28,8 @@ namespace ClientConsole
 		/// </summary>
 		[DataMember]
 		public String Text { get; set; }
-	}
+
+        [DataMember]
+        public String listeReponses { get; set; }
+    }
 }

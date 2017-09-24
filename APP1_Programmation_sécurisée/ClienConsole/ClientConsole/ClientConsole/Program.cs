@@ -5,6 +5,9 @@ using System.Threading;
 using Newtonsoft.Json;
 using System.Text;
 using System.Runtime.Serialization.Json;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ClientConsole
 {
@@ -58,16 +61,30 @@ namespace ClientConsole
                 if (i == 0)
                 {
                     // Get premeiere question
-                    GetQuestion(token, poolId, 0);
+                    GetQuestion(token, poolId, 1);
+                    i = 0;
                 } else
                 {
                     // Get autres questions
-                    GetQuestion(token, poolId, poolId * 10 + i);
+                    GetQuestion(token, poolId, poolId * 10 + i -1);
                 }
+
                 // Lecture reponse
                 string reponseQuestion = Console.ReadLine();
+
+                // check the answer
+                Boolean check = checkAnswer(poolId, poolId * 10 + i + 1 - 1, reponseQuestion);
+
+                while (!check)
+                {
+                    // Lecture reponse
+                    reponseQuestion = Console.ReadLine();
+                    // check the answer
+                    check = checkAnswer(poolId, poolId * 10 + i + 1 - 1, reponseQuestion);
+                }
+
                 // Post de la reponse vers l api
-                PostQuestion(token, poolId,poolId * 10 + i +1 , reponseQuestion);
+                PostQuestion(token, poolId,poolId * 10 + i +1 -1 , reponseQuestion);
             }
 
             // Fin du Main
@@ -224,6 +241,24 @@ namespace ClientConsole
                 System.Environment.Exit(1);
             }
 
+        }
+
+        public static Boolean checkAnswer(int idPoll, int idQuestion, string reponse)
+        {
+            Boolean exist = false;
+
+            ISondageDAO sondageDAO = new SimpleSondageDAO();
+            IList<PollQuestion> list = sondageDAO.getAllQuestion(idPoll);
+            PollQuestion question = list[idQuestion - idPoll*10];
+
+            string[] answersChoice = question.listeReponses.Split(",");
+
+            if (answersChoice.Contains(reponse))
+            {
+                exist = true;
+            }
+
+            return exist;
         }
     }
 }

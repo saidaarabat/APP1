@@ -34,5 +34,11 @@ namespace WebAPI_Sondage.Models
         /// </summary>
         [DataMember]
         public String Text { get; set; }
+
+        /// <summary>
+        /// liste des reponses possible
+        /// </summary>
+        [DataMember]
+        public String listeReponses { get; set; }
     }
 }

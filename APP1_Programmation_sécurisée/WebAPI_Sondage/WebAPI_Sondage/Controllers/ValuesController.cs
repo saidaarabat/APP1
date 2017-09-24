@@ -59,9 +59,20 @@ namespace WebAPI_Sondage.Controllers
             Boolean tokenValidation = validationToken.checkToken(token);
 
             // Boolean condition de validation de l'URL
+            Boolean bIdQuestion = false;
+
             Boolean bIdPoll = idPoll.Equals(1) || idPoll.Equals(2); // true si pollId = 1 ou 2
-            Boolean bIdQuestion = idPoll.Equals(0) || idPoll.Equals(11) || idPoll.Equals(12) || idPoll.Equals(13)
-                || idPoll.Equals(21) || idPoll.Equals(22) || idPoll.Equals(23);
+            if (idPoll.Equals(1))
+            {
+                bIdQuestion = idQuestion.Equals(1) || idQuestion.Equals(11) || idQuestion.Equals(12) || idQuestion.Equals(13);
+            }
+            else if (idPoll.Equals(2))
+            {
+                bIdQuestion = idQuestion.Equals(1) || idQuestion.Equals(21)
+                || idQuestion.Equals(22) || idQuestion.Equals(23);
+            }
+
+            Console.WriteLine(bIdPoll.ToString() + bIdQuestion.ToString());
 
             // Si le token est valide : Code : 200 OK et data 
             if (tokenValidation.Equals(true) && bIdPoll && bIdQuestion)
@@ -122,7 +133,7 @@ namespace WebAPI_Sondage.Controllers
                         userId = user.id;
                     }
                 }
-                Console.WriteLine(userId);
+
                 iSondageDAO.SaveAnswer(userId, reponseQuestion);
                 return Ok();
             }
