@@ -14,8 +14,7 @@ namespace WebAPI_Sondage.Controllers
     [Route("api/[controller]")]
 	public class ValuesController : Controller
     {
-        [HttpGet("token:string")]
-        [ValidateAntiForgeryToken]
+        [HttpGet("token")]
         public IActionResult tokenCheck()
         {
             Console.WriteLine("Vérification de token");
@@ -34,15 +33,11 @@ namespace WebAPI_Sondage.Controllers
             {
                 return Ok();
             }
-            else
-            {
-                // Sinon non autorisé
-                return Unauthorized();
-            }
+            // Sinon non autorisé
+            return Unauthorized();
         }
         // GET api/values/idPoll/idQuestion
         [HttpGet("{idPoll:int}/{idQuestion:int}")]
-        [ValidateAntiForgeryToken]
         public IActionResult Get(int idPoll, int idQuestion)
         {
 
@@ -82,22 +77,18 @@ namespace WebAPI_Sondage.Controllers
                 string json = JsonConvert.SerializeObject(question);
                 return Ok(question);
             }
-            else
+            if (bIdPoll || bIdQuestion)
             {
-                if (bIdPoll || bIdQuestion)
-                {
-                    return BadRequest();
-                }
-                // Sinon non autorisé
-                return Unauthorized();
+                return BadRequest();
             }
-                
+            // Sinon non autorisé
+            return Unauthorized();
+
         }
 
 
         // Post le reponse a la question du sondage
         [HttpPost]
-        [ValidateAntiForgeryToken]
         [Consumes("application/json")]
 
         public IActionResult Post([FromBody]PollQuestion reponseQuestion)
