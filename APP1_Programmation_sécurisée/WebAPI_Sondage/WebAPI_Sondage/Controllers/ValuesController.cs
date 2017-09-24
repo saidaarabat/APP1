@@ -12,10 +12,9 @@ using Newtonsoft.Json;
 namespace WebAPI_Sondage.Controllers
 {
     [Route("api/[controller]")]
-	[RESTAuthorize]
 	public class ValuesController : Controller
     {
-        [HttpGet("token")]
+        [HttpGet("token:string")]
         public IActionResult tokenCheck()
         {
             Console.WriteLine("Vérification de token");
@@ -41,7 +40,7 @@ namespace WebAPI_Sondage.Controllers
             }
         }
         // GET api/values/idPoll/idQuestion
-        [HttpGet("{idPoll}/{idQuestion}")]
+        [HttpGet("{idPoll:int}/{idQuestion:int}")]
         public IActionResult Get(int idPoll, int idQuestion)
         {
 
@@ -96,8 +95,10 @@ namespace WebAPI_Sondage.Controllers
 
         // Post le reponse a la question du sondage
         [HttpPost]
+
         public IActionResult Post([FromBody]PollQuestion reponseQuestion)
         {
+
             Console.WriteLine("Post");
 
             // Definition des variables
