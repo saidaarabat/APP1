@@ -3,6 +3,8 @@ using System.Net;
 using System.IO;
 using System.Threading;
 using Newtonsoft.Json;
+using System.Text;
+using System.Runtime.Serialization.Json;
 
 namespace ClientConsole
 {
@@ -14,17 +16,41 @@ namespace ClientConsole
 			// Choix du Token
 			Console.WriteLine("Authentification : 1 = Token valide -- 2 = Token non valide");
 
-            string token="InvalidToken";
+            string token=null;
             // Lecture de son choix et conversion en Int
-			int valideToken = Int32.Parse(Console.ReadLine());
-			if (valideToken.Equals(1))
-				token = "eyJpZCI6IjEiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjEifQ.pQYKhDF1yyKOjPvZQEMSc5LAizD3R2VMzr1rbH6ih0I";
+			string valideToken = Console.ReadLine();
 
-			// Choix du sondage par l utilisateur
-			Console.WriteLine("Bienvenue dans l'application client dédiée au sondage, quel sondage voulez vous sélectionner : 1-Lecture à la maison ou 2-Consommation de café et d'alcool ? Tapez 1 ou 2 ");
+            while (!valideToken.Equals("1") && !valideToken.Equals("2"))
+            {
+                Console.WriteLine("Veuillez faire une saisie valide");
+                valideToken = Console.ReadLine();
+            }
+
+            if (valideToken.Equals("1"))
+            {
+                token = "eyJpZCI6IjEiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjEifQ.pQYKhDF1yyKOjPvZQEMSc5LAizD3R2VMzr1rbH6ih0I";
+            }
+            else if (valideToken.Equals("1"))
+            {
+                token = "InvalidToken";
+            }
+
+            // Validation du token
+            CheckToken(token);
+
+            // Choix du sondage par l utilisateur
+            Console.WriteLine("Bienvenue dans l'application client dédiée au sondage, quel sondage voulez vous sélectionner : 1-Lecture à la maison ou 2-Consommation de café et d'alcool ? Tapez 1 ou 2 ");
 
             // Lecture de son choix et conversion en int
-            int poolId = Int32.Parse(Console.ReadLine());
+            string poolIdString = Console.ReadLine();
+
+            while (!poolIdString.Equals("1") && !poolIdString.Equals("2"))
+            {
+                Console.WriteLine("Veuillez faire une saisie valide");
+                valideToken = Console.ReadLine();
+            }
+
+            int poolId = Int32.Parse(poolIdString);
 
             // parcours des questions 
             for (int i = 0; i < 4; i++)
@@ -46,8 +72,7 @@ namespace ClientConsole
 
             // Fin du Main
             Console.WriteLine("Merci d'avoir participé au sondage");
-            int milliseconds = 2000;
-            Thread.Sleep(milliseconds);
+            Thread.Sleep(2000);
 
         }
 
@@ -61,7 +86,7 @@ namespace ClientConsole
             try
             {
                 // Adresse auquel correspond le GET de l API
-                string webAddr = "https://localhost:8081/api/values/" + poolId.ToString() + questionId.ToString();
+                string webAddr = "https://localhost:8081/api/values/" + poolId.ToString() + "/" + questionId.ToString();
 
                 // Définition du Header
                 var httpWebRequest = (HttpWebRequest)WebRequest.Create(webAddr);
@@ -82,18 +107,21 @@ namespace ClientConsole
                 var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
                 using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
                 {
-                    var responseText = streamReader.ReadToEnd();
-                    Console.WriteLine(responseText);
+                    
+                    var response = streamReader.ReadToEnd();
 
-                    //Now you have your response.
-                    //or false depending on information in the response     
+                    // Afficher la question depuis la RequestReponse
+                    var pollQuestion = JsonConvert.DeserializeObject<PollQuestion>(response);
+                    Console.WriteLine(pollQuestion.Text);    
                 }
             }
 
             // Exception
             catch (WebException ex)
             {
-                Console.WriteLine(value: "Une erreur est survenue, veuillez réessayer plutard");
+                Console.WriteLine(value: ex.Message);
+                Thread.Sleep(2000);
+                System.Environment.Exit(1);
             }
 
         }
@@ -153,9 +181,49 @@ namespace ClientConsole
                 // Exception
 			    catch (WebException ex)
 			    {
-				    Console.WriteLine(value: "Une erreur est survenue, veuillez réessayer plutard");
-
-			    }
+                    Console.WriteLine(value: ex.Message);
+                    Thread.Sleep(2000);
+                    System.Environment.Exit(1);
             }
+            }
+
+        /*
+         * Fonction Get pour demander à l'API REST la question 
+        */
+        public static void CheckToken(string token)
+        {
+            try
+            {
+                // Adresse auquel correspond le GET de l API
+                string webAddr = "https://localhost:8081/api/values/token";
+
+                // Définition du Header
+                var httpWebRequest = (HttpWebRequest)WebRequest.Create(webAddr);
+                httpWebRequest.ContentType = "application/json; charset=utf-8";
+                httpWebRequest.Headers["Token"] = token;
+                httpWebRequest.Method = "GET";
+
+                // Token authentification 
+
+                // Certificat pour le SSL/TLS
+                //X509Certificate2 cert = new X509Certificate2("mycerts.cer","password");
+                //X509Certificate2 cert = new X509Certificate2("mycerts.cer");
+                //httpWebRequest.ClientCertificates.Add(cert);
+                // Ignore the certificate check when ssl
+                httpWebRequest.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
+
+                // Envoi de la request et lecture de la reponse
+                var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+            }
+
+            // Exception
+            catch (WebException ex)
+            {
+                Console.WriteLine(value: ex.Message);
+                Thread.Sleep(2000);
+                System.Environment.Exit(1);
+            }
+
         }
+    }
 }

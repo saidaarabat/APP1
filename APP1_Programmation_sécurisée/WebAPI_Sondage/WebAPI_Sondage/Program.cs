@@ -23,11 +23,12 @@ namespace WebAPI_Sondage
 	    WebHost.CreateDefaultBuilder(args)
                .UseKestrel(options => {
 
+                   options.Limits.MaxConcurrentConnections = 4;
+                   options.Limits.MaxConcurrentUpgradedConnections = 4;
+                   options.Limits.MaxRequestBodySize = 10 * 1024;
+
 				   options.Listen(IPAddress.Loopback, 8080, listenOptions =>
 				   {
-					   // Uncomment the following to enable Nagle's algorithm for this endpoint.
-					   //listenOptions.NoDelay = false;
-
 					   listenOptions.UseConnectionLogging();
 				   });
 
