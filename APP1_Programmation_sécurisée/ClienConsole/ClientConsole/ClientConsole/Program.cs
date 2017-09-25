@@ -3,11 +3,7 @@ using System.Net;
 using System.IO;
 using System.Threading;
 using Newtonsoft.Json;
-using System.Text;
-using System.Runtime.Serialization.Json;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ClientConsole
 {
@@ -121,6 +117,8 @@ namespace ClientConsole
                 //X509Certificate2 cert = new X509Certificate2("mycerts.cer","password");
                 //httpWebRequest.ClientCertificates.Add(cert);
                 // Ignore the certificate check when ssl
+               // Boolean certificatChecking = checkCertificat(httpWebRequest);
+
                 httpWebRequest.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
 
                 // Envoi de la request et lecture de la reponse
@@ -180,6 +178,7 @@ namespace ClientConsole
                     poolQuestion.PollId = pollId;
                     poolQuestion.QuestionId = questionId;
                     poolQuestion.Text = text;
+                    poolQuestion.listeReponses = "a,b,c,d";
 
                     // Convertion en JSON
                     string json = JsonConvert.SerializeObject(poolQuestion);
@@ -274,6 +273,29 @@ namespace ClientConsole
             }
 
             return exist;
+        }
+
+        /*
+         * Fonction permet de valider le cerificat envoyé par le serveur 
+         * httpWebRequest : la requete http 
+         * Boolean : true si certificat validé
+         */
+        public static Boolean checkCertificat(HttpWebRequest httpWebRequest)
+        {
+            ServicePointManager.ServerCertificateValidationCallback +=
+            (sender, cert, chain, error) =>
+            {
+                if (cert.GetCertHashString() == "xxxxxxxxxxxxxxxx")
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            };
+
+            return false;
         }
     }
 }

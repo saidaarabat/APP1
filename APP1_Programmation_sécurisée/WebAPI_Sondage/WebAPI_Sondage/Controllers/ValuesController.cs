@@ -105,6 +105,14 @@ namespace WebAPI_Sondage.Controllers
         public IActionResult Post([FromBody]PollQuestion reponseQuestion)
         {
 
+            // Si un element de la structure est null alors le format du media est non supporté
+            if (reponseQuestion.QuestionId.Equals(0) || reponseQuestion.PollId.Equals(0) || 
+                reponseQuestion.listeReponses.Equals(null) || reponseQuestion.Text.Equals(null))
+            {
+                // Unsupported Media type
+                return StatusCode(415);
+            }
+
             Console.WriteLine("Post");
 
             // Definition des variables
