@@ -23,8 +23,11 @@ namespace WebAPI_Sondage
 	    WebHost.CreateDefaultBuilder(args)
                .UseKestrel(options => {
 
+                   // Limitation du nombre de connections
                    options.Limits.MaxConcurrentConnections = 4;
                    options.Limits.MaxConcurrentUpgradedConnections = 4;
+
+                   // Limitation de la taille du body pour la requete
                    options.Limits.MaxRequestBodySize = 10 * 1024;
 
 				   options.Listen(IPAddress.Loopback, 8080, listenOptions =>
@@ -32,6 +35,7 @@ namespace WebAPI_Sondage
 					   listenOptions.UseConnectionLogging();
 				   });
 
+                   // Definition de l ' HTTPS sur le port 8081 et definition de son certificat
 				   options.Listen(IPAddress.Loopback, 8081, listenOptions =>
 				   {
 					   listenOptions.UseHttps("localhost.pfx", "password");

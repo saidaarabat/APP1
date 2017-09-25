@@ -60,7 +60,7 @@ namespace ClientConsole
 
             // définition des questions des différents sondages
             IList<PollQuestion> poll1 = new List<PollQuestion>();
-            poll1.Add(new PollQuestion { PollId = 1, QuestionId = 11, Text = "À quelle tranche d'âge appartenez-vous? a:0-25 ans, b:25-50 ans, c:50-75 ans, d:75 ans et plus", listeReponses = "a,b,c"});
+            poll1.Add(new PollQuestion { PollId = 1, QuestionId = 11, Text = "À quelle tranche d'âge appartenez-vous? a:0-25 ans, b:25-50 ans, c:50-75 ans, d:75 ans et plus", listeReponses = "a,b,c,d"});
             poll1.Add(new PollQuestion { PollId = 1, QuestionId = 12, Text = "Êtes-vous une femme ou un homme? a:Femme, b:Homme, c:Je ne veux pas répondre", listeReponses = "a,b,c" });
             poll1.Add(new PollQuestion { PollId = 1, QuestionId = 13, Text = "Quel journal lisez-vous à la maison? a: La Presse, b:Le Journal de Montréal, c:The Gazette, d:Le Devoir", listeReponses = "a,b,c,d" });
             poll1.Add(new PollQuestion { PollId = 1, QuestionId = 14, Text = "Combien de temps accordez-vous à la lecture de votre journal quotidiennement? a:Moins de 10 minutes; b:Entre 10 et 30 minutes, c:Entre 30 et 60 minutes, d:60 minutes ou plus", listeReponses = "a,b,c,d" });

@@ -19,26 +19,26 @@ namespace ClientConsole
 			// Choix du Token
 			Console.WriteLine("Authentification : 1 = Token valide -- 2 = Token non valide");
 
-            string token=null;
+            // Initialisation du token
+            string token="TokenInvalid";
+
             // Lecture de son choix et conversion en Int
 			string valideToken = Console.ReadLine();
 
+            // Validation de l entree utilisateur
             while (!valideToken.Equals("1") && !valideToken.Equals("2"))
             {
                 Console.WriteLine("Veuillez faire une saisie valide");
                 valideToken = Console.ReadLine();
             }
 
+            // Definition du token en fonction entrée utilisateur
             if (valideToken.Equals("1"))
             {
                 token = "eyJpZCI6IjEiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjEifQ.pQYKhDF1yyKOjPvZQEMSc5LAizD3R2VMzr1rbH6ih0I";
             }
-            else if (valideToken.Equals("1"))
-            {
-                token = "InvalidToken";
-            }
 
-            // Validation du token
+            // Validation du token envers l API
             CheckToken(token);
 
             // Choix du sondage par l utilisateur
@@ -47,12 +47,14 @@ namespace ClientConsole
             // Lecture de son choix et conversion en int
             string poolIdString = Console.ReadLine();
 
+            // Validation de l entrée de l utilisateru
             while (!poolIdString.Equals("1") && !poolIdString.Equals("2"))
             {
                 Console.WriteLine("Veuillez faire une saisie valide");
                 valideToken = Console.ReadLine();
             }
 
+            // Parse l entree en int
             int poolId = Int32.Parse(poolIdString);
 
             // parcours des questions 
@@ -66,25 +68,27 @@ namespace ClientConsole
                 } else
                 {
                     // Get autres questions
-                    GetQuestion(token, poolId, poolId * 10 + i -1);
+                    GetQuestion(token, poolId, poolId * 10 + i);
                 }
 
                 // Lecture reponse
                 string reponseQuestion = Console.ReadLine();
 
                 // check the answer
-                Boolean check = checkAnswer(poolId, poolId * 10 + i + 1 - 1, reponseQuestion);
+                Boolean check = checkAnswer(poolId, poolId * 10 + i + 1, reponseQuestion);
 
-                while (!check)
+                // VAlidation de la reponse de l ulitisateur pour l aquestion idQuestion du sondage idSondage
+                while (check == false)
                 {
+                    Console.WriteLine("Veuillez faire une réponse valide");
                     // Lecture reponse
                     reponseQuestion = Console.ReadLine();
                     // check the answer
-                    check = checkAnswer(poolId, poolId * 10 + i + 1 - 1, reponseQuestion);
+                    check = checkAnswer(poolId, poolId * 10 + i + 1, reponseQuestion);
                 }
 
                 // Post de la reponse vers l api
-                PostQuestion(token, poolId,poolId * 10 + i +1 -1 , reponseQuestion);
+                PostQuestion(token, poolId,poolId * 10 + i +1 , reponseQuestion);
             }
 
             // Fin du Main
@@ -115,7 +119,6 @@ namespace ClientConsole
 
                 // Certificat pour le SSL/TLS
                 //X509Certificate2 cert = new X509Certificate2("mycerts.cer","password");
-                //X509Certificate2 cert = new X509Certificate2("mycerts.cer");
                 //httpWebRequest.ClientCertificates.Add(cert);
                 // Ignore the certificate check when ssl
                 httpWebRequest.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
@@ -136,6 +139,7 @@ namespace ClientConsole
             // Exception
             catch (WebException ex)
             {
+                // Affichage du message de l exeption retourné par  API
                 Console.WriteLine(value: ex.Message);
                 Thread.Sleep(2000);
                 System.Environment.Exit(1);
@@ -164,7 +168,6 @@ namespace ClientConsole
 
                 // Certificat pour le SSL/TLS
                 //X509Certificate2 cert = new X509Certificate2("mycerts.cer","password");
-                //X509Certificate2 cert = new X509Certificate2("mycerts.cer");
                 //httpWebRequest.ClientCertificates.Add(cert);
                 // Ignore the certificate check when ssl
                 httpWebRequest.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
@@ -188,16 +191,12 @@ namespace ClientConsole
 
                 // Envoi de la requete et lecture reponse
                 var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-				using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
-				{
-					var responseText = streamReader.ReadToEnd();
-				}
-
 			    }
                 
                 // Exception
 			    catch (WebException ex)
 			    {
+                    // Affichage du message de l exeption retourné par  API
                     Console.WriteLine(value: ex.Message);
                     Thread.Sleep(2000);
                     System.Environment.Exit(1);
@@ -224,7 +223,6 @@ namespace ClientConsole
 
                 // Certificat pour le SSL/TLS
                 //X509Certificate2 cert = new X509Certificate2("mycerts.cer","password");
-                //X509Certificate2 cert = new X509Certificate2("mycerts.cer");
                 //httpWebRequest.ClientCertificates.Add(cert);
                 // Ignore the certificate check when ssl
                 httpWebRequest.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
@@ -236,6 +234,7 @@ namespace ClientConsole
             // Exception
             catch (WebException ex)
             {
+                // Affichage du message de l exeption retourné par  API
                 Console.WriteLine(value: ex.Message);
                 Thread.Sleep(2000);
                 System.Environment.Exit(1);
@@ -243,19 +242,35 @@ namespace ClientConsole
 
         }
 
+
+        /*
+         * Fonction validation de la reponse envoyer par l utilisateur a l application
+         * idPoll id sondage
+         * idQuestion id de la question
+         * reponse reponse donnée par l utilisateur
+         * retrun Boolean : true si reponse valide
+         */
         public static Boolean checkAnswer(int idPoll, int idQuestion, string reponse)
         {
+            // initialisation du boolean
             Boolean exist = false;
 
+            // Recuperation de la question idQuestion du sondage IdPool 
             ISondageDAO sondageDAO = new SimpleSondageDAO();
             IList<PollQuestion> list = sondageDAO.getAllQuestion(idPoll);
-            PollQuestion question = list[idQuestion - idPoll*10];
+            PollQuestion question = list[idQuestion - idPoll*10 - 1];
 
-            string[] answersChoice = question.listeReponses.Split(",");
+            // Split la liste des possibilitées de repose
+            string[] answersPossibilities = question.listeReponses.Split(",");
 
-            if (answersChoice.Contains(reponse))
+            // Parcours de la liste
+            foreach(string answerPossibility in answersPossibilities)
             {
-                exist = true;
+                // Check si elle est contenue dans la liste
+                if (reponse == answerPossibility)
+                {
+                    exist = true;
+                }
             }
 
             return exist;

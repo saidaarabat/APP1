@@ -29,6 +29,9 @@ namespace ClientConsole
 		[DataMember]
 		public String Text { get; set; }
 
+        /// <summary>
+        /// Liste des reponses possible pour la question
+        /// </summary>
         [DataMember]
         public String listeReponses { get; set; }
     }

@@ -14,6 +14,7 @@ namespace WebAPI_Sondage.Controllers
     [Route("api/[controller]")]
 	public class ValuesController : Controller
     {
+        // Get pour valider le toekn de l utilisateur avant le debut du sondage
         [HttpGet("token")]
         public IActionResult tokenCheck()
         {
@@ -57,7 +58,10 @@ namespace WebAPI_Sondage.Controllers
             // Boolean condition de validation de l'URL
             Boolean bIdQuestion = false;
 
+            // VAlidation des valeurs poossibles pour idPoll dans l'URL
             Boolean bIdPoll = idPoll.Equals(1) || idPoll.Equals(2); // true si pollId = 1 ou 2
+
+            // VAlidation des valeurs poossibles pour idQuestion en fonction de l idPoll dans l'URL
             if (idPoll.Equals(1))
             {
                 bIdQuestion = idQuestion.Equals(1) || idQuestion.Equals(11) || idQuestion.Equals(12) || idQuestion.Equals(13);
@@ -68,21 +72,28 @@ namespace WebAPI_Sondage.Controllers
                 || idQuestion.Equals(22) || idQuestion.Equals(23);
             }
 
+            // Debug
+            Console.WriteLine(idPoll.ToString() + idQuestion.ToString());
             Console.WriteLine(bIdPoll.ToString() + bIdQuestion.ToString());
 
             // Si le token est valide : Code : 200 OK et data 
             if (tokenValidation.Equals(true) && bIdPoll && bIdQuestion)
             {
+                // Formation de la reponse au POst avec le body en json
                 PollQuestion question = iSondageDAO.GetNextQuestion(idPoll, idQuestion);
                 string json = JsonConvert.SerializeObject(question);
                 return Ok(question);
             }
-            if (bIdPoll || bIdQuestion)
+            //  le token est valide mais que les chemin dans l url ne sont pas correct erreur
+            if (tokenValidation.Equals(true) && (bIdPoll ==false|| bIdQuestion ==false))
             {
                 return BadRequest();
             }
-            // Sinon non autorisé
-            return Unauthorized();
+            else
+            {
+                // Sinon non autorisé
+                return Unauthorized();
+            }
 
         }
 
@@ -130,6 +141,7 @@ namespace WebAPI_Sondage.Controllers
                     }
                 }
 
+                // Sauvegarde de la reponse et return OK
                 iSondageDAO.SaveAnswer(userId, reponseQuestion);
                 return Ok();
             }
