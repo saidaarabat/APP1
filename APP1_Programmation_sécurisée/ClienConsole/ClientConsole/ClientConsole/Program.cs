@@ -47,7 +47,7 @@ namespace ClientConsole
             while (!poolIdString.Equals("1") && !poolIdString.Equals("2"))
             {
                 Console.WriteLine("Veuillez faire une saisie valide");
-                valideToken = Console.ReadLine();
+                poolIdString = Console.ReadLine();
             }
 
             // Parse l entree en int
@@ -117,7 +117,7 @@ namespace ClientConsole
                 //X509Certificate2 cert = new X509Certificate2("mycerts.cer","password");
                 //httpWebRequest.ClientCertificates.Add(cert);
                 // Ignore the certificate check when ssl
-               // Boolean certificatChecking = checkCertificat(httpWebRequest);
+                Boolean certificatChecking = checkCertificat(httpWebRequest);
 
                 httpWebRequest.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
 
@@ -282,7 +282,7 @@ namespace ClientConsole
          */
         public static Boolean checkCertificat(HttpWebRequest httpWebRequest)
         {
-            ServicePointManager.ServerCertificateValidationCallback +=
+            httpWebRequest.ServerCertificateValidationCallback +=
             (sender, cert, chain, error) =>
             {
                 if (cert.GetCertHashString() == "xxxxxxxxxxxxxxxx")
