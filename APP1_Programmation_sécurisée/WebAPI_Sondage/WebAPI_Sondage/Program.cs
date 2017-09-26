@@ -30,10 +30,11 @@ namespace WebAPI_Sondage
                    // Limitation de la taille du body pour la requete
                    options.Limits.MaxRequestBodySize = 10 * 1024;
 
-				   options.Listen(IPAddress.Loopback, 8080, listenOptions =>
+                   // Ligne pour le debug
+                   /*options.Listen(IPAddress.Loopback, 8080, listenOptions =>
 				   {
 					   listenOptions.UseConnectionLogging();
-				   });
+				   });*/
 
                    // Definition de l ' HTTPS sur le port 8081 et definition de son certificat
 				   options.Listen(IPAddress.Loopback, 8081, listenOptions =>
